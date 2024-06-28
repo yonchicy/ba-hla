@@ -22,6 +22,7 @@
  */
 
 #include "ExampleCPPFederate.h"
+#include <cstring>
 
 void helpmenu()
 {

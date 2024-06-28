@@ -17,19 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with ba-hla.  If not, see <http://www.gnu.org/licenses/>.
 #
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.6)
 project(ba-hla)
 
 set(cmake_verbose_makefile ON)
 set(cmake_c_flags_debug ON)
 set(cmake_cxx_flags_debug ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ## enable debugging
 set(cmake_build_type Debug)
 
-include_directories(/usr/local/include/rti1516)
+include_directories(/home/yonchicy/OpenRTI/include/rti1516)
 add_library(ba-hla-lib ExampleFedAmb.cpp ExampleCPPFederate.cpp)
 add_executable(ba-hla main.cpp)
-target_link_libraries(ba-hla ba-hla-lib rti1516 fedtime1516)
+target_link_libraries(ba-hla ba-hla-lib  /home/yonchicy/OpenRTI/build/lib64/librti1516.so /home/yonchicy/OpenRTI/build/lib64/libfedtime1516.so )
 
 install(TARGETS ba-hla DESTINATION bin)
