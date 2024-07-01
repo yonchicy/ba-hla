@@ -190,6 +190,17 @@
        dimensions="NA"
        transportation="HLAreliable"
        order="TimeStamp">
+       <interactionClass
+          name="X">
+          <parameter 
+            name="xa"
+              transportation="HLAreliable"
+              order="TimeStamp"/>
+          <parameter 
+            name="xb"
+              transportation="HLAreliable"
+              order="TimeStamp"/>
+       </interactionClass>
    </interactionClass>
   </interactions>
 

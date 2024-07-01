@@ -20,14 +20,12 @@
 cmake_minimum_required(VERSION 3.6)
 project(ba-hla)
 
-set(cmake_verbose_makefile ON)
-set(cmake_c_flags_debug ON)
-set(cmake_cxx_flags_debug ON)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ## enable debugging
-set(cmake_build_type Debug)
+set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(/home/yonchicy/OpenRTI/include/rti1516)
 add_library(ba-hla-lib ExampleFedAmb.cpp ExampleCPPFederate.cpp)
