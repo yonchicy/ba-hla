@@ -1,4 +1,5 @@
 build/
 .cache/
+.ccls-cache/
 config.json
 __pycache__
