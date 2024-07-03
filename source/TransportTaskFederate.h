@@ -5,6 +5,8 @@
 #include "TransportTaskFedAmb.h"
 #include <RTI/RTIambassador.h>
 #include <memory>
+#include <mutex>
+#include <condition_variable>
 
 #define READY_TO_RUN "ReadyToRun"
 
@@ -28,6 +30,11 @@ class TransportTaskFederate
 		void runFederate( std::string federateName, 
                           std::string fom, 
                           std::string address );
+
+    double timeStep;
+    std::mutex mtx;
+    std::condition_variable cv;
+
 
 	private:
 		/// fom handles
