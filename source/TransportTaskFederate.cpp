@@ -1,5 +1,6 @@
 
 #include "TransportTaskFederate.h"
+#include "TransportTask.h"
 #include "TransportTaskFedAmb.h"
 #include <RTI/LogicalTimeInterval.h>
 #include <RTI/RTI1516fedTime.h>
@@ -10,13 +11,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <thread>
+#include <vector>
 
 using namespace std;
 using namespace rti1516;
 
-TransportTaskFederate::TransportTaskFederate() : timeStep(1.0) {}
+TransportTaskFederate::TransportTaskFederate() : timeStep(1.0), task_num(0ul) {}
 
 TransportTaskFederate::~TransportTaskFederate() {
+  for (auto &worker : workers) {
+    if (worker.joinable()) {
+      worker.join();
+    }
+  }
   if (this->fedamb)
     delete this->fedamb;
 }
@@ -70,7 +78,7 @@ void TransportTaskFederate::runFederate(std::string federateName,
   /// 3. join the federation
   /////////////////////////////
   /// create the federate ambassador and join the federation
-  this->fedamb = new TransportTaskFedAmb();
+  this->fedamb = new TransportTaskFedAmb(this);
   rtiamb->joinFederationExecution(
       convertStringToWstring(federateName),
       convertStringToWstring("TransportTaskFederation"), *fedamb);
@@ -381,15 +389,16 @@ void TransportTaskFederate::advanceTime(double timestep) {
   /// request the advance
   fedamb->isAdvancing = true;
   RTI1516fedTime newTime = (fedamb->federateTime + timestep);
+  {
+    std::lock_guard<std::mutex> lock(mtx);
 
-  std::lock_guard<std::mutex> lock(mtx);
+    rtiamb->timeAdvanceRequest(newTime);
 
-  rtiamb->timeAdvanceRequest(newTime);
-
-  /// wait for the time advance to be granted. ticking will tell the
-  /// LRC to start delivering callbacks to the federate
-  while (fedamb->isAdvancing) {
-    rtiamb->evokeCallback(12.0);
+    /// wait for the time advance to be granted. ticking will tell the
+    /// LRC to start delivering callbacks to the federate
+    while (fedamb->isAdvancing) {
+      rtiamb->evokeCallback(12.0);
+    }
   }
   cv.notify_all();
 }
@@ -405,4 +414,19 @@ void TransportTaskFederate::deleteObject(ObjectInstanceHandle objectHandle) {
 
 double TransportTaskFederate::getLbts() {
   return (fedamb->federateTime + fedamb->federateLookahead);
+}
+
+TransportTask TransportTaskFederate::getTask() {
+  TransportTask t(++task_num, Position(0, 0), Position(100, 100), 4,
+                  this->fedamb->federateTime, this->timeStep / 2,this);
+
+  return std::move(t);
+}
+
+void TransportTaskFederate::startTransportTask() {
+
+  std::wcout << "---starting new transport task" << std::endl;
+
+  TransportTask task = getTask();
+  workers.emplace_back(std::thread(dispatchTransportTask, task));
 }

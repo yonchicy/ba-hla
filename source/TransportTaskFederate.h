@@ -7,6 +7,8 @@
 #include <memory>
 #include <mutex>
 #include <condition_variable>
+#include <thread>
+#include <vector>
 
 #define READY_TO_RUN "ReadyToRun"
 
@@ -15,6 +17,8 @@ using namespace rti1516;
 /**
  * Example Federate implementation
  */
+
+class TransportTask;
 class TransportTaskFederate
 {
 	public:
@@ -32,8 +36,14 @@ class TransportTaskFederate
                           std::string address );
 
     double timeStep;
+    unsigned long long task_num;
     std::mutex mtx;
     std::condition_variable cv;
+
+
+    std::vector<std::thread> workers;
+    void startTransportTask();
+    TransportTask getTask();
 
 
 	private:
