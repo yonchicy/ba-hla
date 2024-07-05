@@ -21,11 +21,12 @@
  * along with ba-hla.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "sql/connect.h"
 #include "TransportTaskFederate.h"
+#include "sql/SQLConnect.h"
+#include "Road.h"
 #include <cstdio>
 #include <cstring>
-#include <string>
+#include <iostream>
 
 void helpmenu() {
   printf("Usage: ba-hla --name <NAME> --address <IP-ADDRESS> --fom "
@@ -38,44 +39,49 @@ void helpmenu() {
   printf("\nPATH/TO/FOM: Path where fom file can be reached. Example: "
          "/tmp/fom.xml");
 }
-
 int main(int argc, char *argv[]) {
-  // check to see if we have a federate name
-  // char *federateName = "exampleFederate";
-  std::string federateName, fomPath, rtiAddress;
-  bool name = false, fom = false, address = false;
-
-  for (int i = 0; i < argc; i++) {
-    if (strcmp(argv[i], "--name") == 0) {
-      federateName = argv[i + 1];
-      name = true;
-    } else if (strcmp(argv[i], "--fom") == 0) {
-      fom = true;
-      fomPath = argv[i + 1];
-    } else if (strcmp(argv[i], "--address") == 0) {
-      address = true;
-      rtiAddress = argv[i + 1];
-    } else if (strcmp(argv[i], "--help") == 0) {
-      helpmenu();
-    }
-  }
-
-  // create and run the federate
-  TransportTaskFederate *federate;
-
-  if (name && fom) {
-    if (!address)
-      rtiAddress = "127.0.0.1";
-    federate = new TransportTaskFederate();
-    federate->runFederate(federateName, fomPath, rtiAddress);
-  } else {
-    if (!name)
-      printf("No Federatename given\n");
-    if (!fom)
-      printf("No FOM location given\n");
-  }
-
-  // clean up
-  delete federate;
+  RoadInfo r;
+  r.init();
   return 0;
 }
+
+// int main(int argc, char *argv[]) {
+//   // check to see if we have a federate name
+//   // char *federateName = "exampleFederate";
+//   std::string federateName, fomPath, rtiAddress;
+//   bool name = false, fom = false, address = false;
+//
+//   for (int i = 0; i < argc; i++) {
+//     if (strcmp(argv[i], "--name") == 0) {
+//       federateName = argv[i + 1];
+//       name = true;
+//     } else if (strcmp(argv[i], "--fom") == 0) {
+//       fom = true;
+//       fomPath = argv[i + 1];
+//     } else if (strcmp(argv[i], "--address") == 0) {
+//       address = true;
+//       rtiAddress = argv[i + 1];
+//     } else if (strcmp(argv[i], "--help") == 0) {
+//       helpmenu();
+//     }
+//   }
+//
+//   // create and run the federate
+//   TransportTaskFederate *federate;
+//
+//   if (name && fom) {
+//     if (!address)
+//       rtiAddress = "127.0.0.1";
+//     federate = new TransportTaskFederate();
+//     federate->runFederate(federateName, fomPath, rtiAddress);
+//   } else {
+//     if (!name)
+//       printf("No Federatename given\n");
+//     if (!fom)
+//       printf("No FOM location given\n");
+//   }
+//
+//   // clean up
+//   delete federate;
+//   return 0;
+// }
