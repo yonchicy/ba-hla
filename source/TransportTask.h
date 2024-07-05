@@ -29,6 +29,7 @@ public:
   TransportTask(unsigned long long idx_, Position from_, Position to_,
                 double speed_, double localTime_, double timeStep_,TransportTaskFederate *fed);
   bool arrive();
+  unsigned long long getIdx();
   void findPath();
   void iterate();
   void goNextPosition();

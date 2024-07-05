@@ -134,12 +134,6 @@ void TransportTaskFederate::runFederate(std::string federateName,
   publishAndSubscribe();
   cout << "Published and Subscribed" << endl;
 
-  /////////////////////////////////////
-  // 8. register an object to update
-  /////////////////////////////////////
-  ObjectInstanceHandle objectHandle = registerObject();
-  wcout << L"Registered Object, handle=" << objectHandle << endl;
-
   ////////////////////////////////////
   // 9. do the main simulation loop
   ////////////////////////////////////
@@ -147,9 +141,8 @@ void TransportTaskFederate::runFederate(std::string federateName,
   // update the attribute values of the object we registered, and will
   // send an interaction.
   int i;
-  for (i = 0; i < 20; i++) {
+  for (i = 0; i<40; i++) {
     /// 9.1 update the attribute values of the instance
-    updateAttributeValues(objectHandle);
 
     /// 9.2 send an interaction
     sendInteraction();
@@ -162,8 +155,6 @@ void TransportTaskFederate::runFederate(std::string federateName,
   //////////////////////////////////////
   // 10. delete the object we created
   //////////////////////////////////////
-  deleteObject(objectHandle);
-  wcout << "Deleted Object, handle=" << objectHandle << endl;
 
   ////////////////////////////////////
   // 11. resign from the federation
@@ -248,29 +239,6 @@ void TransportTaskFederate::enableTimePolicy() {
  * other federates produce it.
  */
 void TransportTaskFederate::publishAndSubscribe() {
-  /////////////////////////////////////////////
-  /// publish all attributes of ObjectRoot.A
-  /////////////////////////////////////////////
-  /// before we can register instance of the object class ObjectRoot.A and
-  /// update the values of the various attributes, we need to tell the RTI
-  /// that we intend to publish this information\n
-
-  /// package the information into a handle set
-  AttributeHandleSet attributes;
-  attributes.insert(this->aaHandle);
-  attributes.insert(this->abHandle);
-  attributes.insert(this->acHandle);
-
-  /// do the actual publication
-  rtiamb->publishObjectClassAttributes(this->aHandle, attributes);
-
-  //////////////////////////////////////////////////
-  /// subscribe to all attributes of ObjectRoot.A
-  //////////////////////////////////////////////////
-  /// we also want to hear about the same sort of information as it is
-  /// created and altered in other federates, so we need to subscribe to it
-  rtiamb->subscribeObjectClassAttributes(this->aHandle, attributes, true);
-
   //////////////////////////////////////////////////////
   /// publish the interaction class InteractionRoot.X
   //////////////////////////////////////////////////////
@@ -417,7 +385,7 @@ double TransportTaskFederate::getLbts() {
 }
 
 TransportTask TransportTaskFederate::getTask() {
-  TransportTask t(++task_num, Position(0, 0), Position(100, 100), 4,
+  TransportTask t(++task_num, Position(0, 0), Position(100, 100), 100,
                   this->fedamb->federateTime, this->timeStep / 2,this);
 
   return std::move(t);

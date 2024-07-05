@@ -23,6 +23,7 @@ void dispatchTransportTask(TransportTask task) {
 
     task.iterate();
   }
+  std::cout << "task " << task.getIdx()<<" finish"<<std::endl;
 }
 void TransportTask::findPath() { std::cout << "finding path" << std::endl; }
 
@@ -39,6 +40,7 @@ void TransportTask::iterate() {
   lock.unlock();
   this->federate->cv.notify_all();
 }
+unsigned long long TransportTask::getIdx() { return this->idx; }
 
 void TransportTask::goNextPosition() {
   double dlat = destination.lat - pos.lat;
