@@ -3,3 +3,4 @@ build/
 .ccls-cache/
 config.json
 __pycache__
+.xmake/

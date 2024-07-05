@@ -1,0 +1,13 @@
+add_rules("plugin.compile_commands.autoupdate", {outputdir ="build" })
+set_languages("cxx11")
+set_defaultmode("debug")
+
+target("ba-hla")
+  set_symbols ("debug")
+  set_optimize("none")
+  set_kind("binary")
+  add_files("source/**.cpp")
+  add_includedirs("/home/yonchicy/OpenRTI/include/rti1516")
+  add_includedirs("source")
+  add_links("/home/yonchicy/OpenRTI/build/lib64/librti1516.so","/home/yonchicy/OpenRTI/build/lib64/libfedtime1516.so")
+  set_targetdir("$(buildir)")

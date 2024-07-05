@@ -31,7 +31,7 @@ include_directories(/home/yonchicy/OpenRTI/include/rti1516)
 #add_library(ba-hla-lib ExampleFedAmb.cpp ExampleCPPFederate.cpp)
 #add_executable(ba-hla main.cpp)
 #add_library(ba-hla-lib ExampleFedAmb.cpp ExampleCPPFederate.cpp)
-file(GLOB SRC_FILES "*.cpp")
+file(GLOB_ SRC_FILES "*.cpp")
 add_executable(ba-hla ${SRC_FILES})
 target_link_libraries(ba-hla  /home/yonchicy/OpenRTI/build/lib64/librti1516.so /home/yonchicy/OpenRTI/build/lib64/libfedtime1516.so )
 
