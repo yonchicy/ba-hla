@@ -84,7 +84,7 @@ void ExampleCPPFederate::runFederate( std::string federateName, std::string fom,
 	///
 	try
 	{
-		rtiamb->createFederationExecution( L"ExampleFederation",
+		rtiamb->createFederationExecution( L"TransportTaskFederation",
         convertStringToWstring(fom));
 		cout << "Created Federation" << endl;
 	}
@@ -99,7 +99,7 @@ void ExampleCPPFederate::runFederate( std::string federateName, std::string fom,
 	/// create the federate ambassador and join the federation
 	this->fedamb = new ExampleFedAmb();
 	rtiamb->joinFederationExecution( convertStringToWstring(federateName),
-    convertStringToWstring("ExampleFederation"), *fedamb );
+    convertStringToWstring("TransportTaskFederation"), *fedamb );
 	cout << "Joined Federation as " << federateName << endl;
 
 	/// initialize the handles - have to wait until we are joined
@@ -156,8 +156,6 @@ void ExampleCPPFederate::runFederate( std::string federateName, std::string fom,
 	/////////////////////////////////////
 	// 8. register an object to update
 	/////////////////////////////////////
-	ObjectInstanceHandle objectHandle = registerObject();
-	wcout << L"Registered Object, handle=" << objectHandle << endl;
 
 	////////////////////////////////////
 	// 9. do the main simulation loop
@@ -168,11 +166,10 @@ void ExampleCPPFederate::runFederate( std::string federateName, std::string fom,
 	int i;
 	for( i = 0; i < 20; i++ )
 	{
-		/// 9.1 update the attribute values of the instance
-		updateAttributeValues( objectHandle );
 
 		/// 9.2 send an interaction
-		sendInteraction();
+    if(i==1)
+      sendInteraction();
 
 		/// 9.3 request a time advance and wait until we get it
 		advanceTime( 1.0 );
@@ -182,8 +179,6 @@ void ExampleCPPFederate::runFederate( std::string federateName, std::string fom,
 	//////////////////////////////////////
 	// 10. delete the object we created
 	//////////////////////////////////////
-	deleteObject( objectHandle );
-	wcout << "Deleted Object, handle=" << objectHandle << endl;
 
 	////////////////////////////////////
 	// 11. resign from the federation
@@ -198,7 +193,7 @@ void ExampleCPPFederate::runFederate( std::string federateName, std::string fom,
 	//       remain. in that case we'll leave it for them to clean up
 	try
 	{
-		rtiamb->destroyFederationExecution( L"ExampleFederation" );
+		rtiamb->destroyFederationExecution( L"TransportTaskFederation" );
 		cout << "Destroyed Federation" << endl;
 	}
 	catch( FederationExecutionDoesNotExist dne )
@@ -278,28 +273,6 @@ void ExampleCPPFederate::enableTimePolicy()
  */
 void ExampleCPPFederate::publishAndSubscribe()
 {
-	/////////////////////////////////////////////
-	/// publish all attributes of ObjectRoot.A
-	/////////////////////////////////////////////
-	/// before we can register instance of the object class ObjectRoot.A and
-	/// update the values of the various attributes, we need to tell the RTI
-	/// that we intend to publish this information\n
-
-	/// package the information into a handle set
-	AttributeHandleSet attributes;
-	attributes.insert( this->aaHandle );
-	attributes.insert( this->abHandle );
-	attributes.insert( this->acHandle );
-
-	/// do the actual publication
-	rtiamb->publishObjectClassAttributes( this->aHandle, attributes );
-
-	//////////////////////////////////////////////////
-	/// subscribe to all attributes of ObjectRoot.A
-	//////////////////////////////////////////////////
-	/// we also want to hear about the same sort of information as it is
-	/// created and altered in other federates, so we need to subscribe to it
-	rtiamb->subscribeObjectClassAttributes( this->aHandle, attributes, true);
 
 	//////////////////////////////////////////////////////
 	/// publish the interaction class InteractionRoot.X
@@ -311,12 +284,6 @@ void ExampleCPPFederate::publishAndSubscribe()
 	/// do the publication
 	rtiamb->publishInteractionClass( this->xHandle );
 
-	/////////////////////////////////////////////////////
-	/// subscribe to the InteractionRoot.X interaction //
-	/////////////////////////////////////////////////////
-	/// we also want to receive other interaction of the same type that are
-	/// sent out by other federates, so we have to subscribe to it first
-	rtiamb->subscribeInteractionClass( this->xHandle );
 }
 
 /**
