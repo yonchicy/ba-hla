@@ -385,8 +385,8 @@ double TransportTaskFederate::getLbts() {
 }
 
 TransportTask TransportTaskFederate::getTask() {
-  TransportTask t(++task_num, Position(0, 0), Position(100, 100), 100,
-                  this->fedamb->federateTime, this->timeStep / 2,this);
+  TransportTask t(++task_num,roads.getNode(1),roads.getNode(5), 1,
+                  this->fedamb->federateTime, this->timeStep /2,this);
 
   return std::move(t);
 }
